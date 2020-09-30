@@ -1,7 +1,8 @@
-//created by: sarai roiz
+
 package moveoExe;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Scanner;
 
 public class MatricesMultiplicationManeger implements Runnable{
@@ -11,23 +12,25 @@ public class MatricesMultiplicationManeger implements Runnable{
 	private final Scanner scan;
 
 	WaitableStack<MatrixCreate> waitablestack;
-	private HashMap threadMap;
+	 protected HashMap threadMap ;
 	
 	public MatricesMultiplicationManeger(Scanner scan){
 		this.scan = scan;
 	}
 
 	public void multiplythematricesandprinttheoutput(){
-		resetAllInputs();
-		getInputFromUser(scan);
-		createQueueOfMatrices();
-		run();
-//		threadsCreate();
-//		waitForThreadsToFinish();
+		while (true){
+			resetAllInputs();
+			getInputFromUser(scan);
+			createQueueOfMatrices();
+			createThreadAndRun();
+			waitForThreadsToFinish();
+			printFinalMatrix(waitablestack.dequeue().getMatrix());
+			}
 	}
 
 	private void createQueueOfMatrices(){
-		waitablestack = new WaitableStack<MatrixCreate>();
+		waitablestack = new WaitableStack<>();
  		for(int i = 0 ; i < quantityOfsquareMatrices ; i++) {
  			waitablestack.enqueueAtCreate(new MatrixCreate(dimensionOftheSquareMatrices));
 		}
@@ -66,37 +69,31 @@ public class MatricesMultiplicationManeger implements Runnable{
 				}
 				System.out.println("}");
 			}
-			
 			System.out.println("}");
 		}
 
 	@Override
 	public void run() {
-		boolean isRuning = true;
 
-		while(isRuning){
-			MatrixCreate[] matrices = waitablestack.doubleDequeue();
-			if(matrices[1] == null){
-				if(matrices[0] != null){
-					printFinalMatrix(matrices[0].getMatrix());
-				}
+
+		boolean isRuning = true;
+		while(isRuning) {
+			List<MatrixCreate> matrices =  waitablestack.doubleDequeue();
+			if (matrices.size()<2) {
 				isRuning = false;
 				threadMap.remove(Thread.currentThread().getId());
-			}
-			else{
-				int[][]  newMatrix = new MathActionsOnMatrixs().multipleTwoMtrices(matrices[0].getMatrix(),matrices[1].getMatrix());
+			} else {
+				int[][] newMatrix = new MathActionsOnMatrixs().multipleTwoMtrices(matrices.get(0).getMatrix(), matrices.get(1).getMatrix());
 				MatrixCreate newMatrixClass = new MatrixCreate(newMatrix);
 				waitablestack.enqueueAfterMultiply(newMatrixClass);
 			}
 		}
-
-
 	}
 
-	private void threadsCreate() {
+	private void createThreadAndRun() {
 		threadMap  =  new HashMap<Long,Thread>();
-		for (int i = 0; i < numbersOfThreads; i++){
-			Thread thread = new Thread();
+		for (int i = 1; i < (numbersOfThreads); i++){
+			Thread thread = new Thread(this);
 			threadMap.put(thread.getId(), thread);
 			thread.start();
 		}
@@ -105,7 +102,7 @@ public class MatricesMultiplicationManeger implements Runnable{
 	private void waitForThreadsToFinish(){
 		while (!threadMap.isEmpty()){
 			try {
-				Thread.sleep(3000);
+				Thread.sleep(500);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
