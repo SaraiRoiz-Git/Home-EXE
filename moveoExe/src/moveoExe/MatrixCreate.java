@@ -7,9 +7,6 @@ public class MatrixCreate {
 		matrix = new int[matrixSize][matrixSize];
 		createMatricsWithRandomNumbers(matrixSize);
 	}
-
-	public MatrixCreate(){
-	}
 	public MatrixCreate(int[][] matrix) {
 		this.matrix = matrix;
 	}

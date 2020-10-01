@@ -1,6 +1,5 @@
 package moveoExe;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Stack;
@@ -46,23 +45,7 @@ class WaitableStack<MatrixCreate> {
 	public synchronized void enqueueAfterMultiply(MatrixCreate element) {
 			stack.push(element);
 			numberOfActionsDone++;
-				notifyAll();
+			notifyAll();
 
 	}
 }
-
-//			while (returnData.size() < 2) {
-//				if (stack.isEmpty()) {
-//					if (numberOfActionsDone == (numberObjectEntered - 1)) {
-//						break;
-//					}
-//					try {
-//						wait();
-//					} catch (InterruptedException e) {
-//						e.printStackTrace();
-//					}
-//				} else {
-//					returnData.add(stack.pop());
-//				}
-//			}
-//			return returnData;
