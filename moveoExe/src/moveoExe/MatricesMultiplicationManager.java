@@ -30,6 +30,8 @@ public class MatricesMultiplicationManager implements Runnable{
 				createThreadAndRun();
 				waitForThreadsToFinish();
 				printFinalMatrix(waitablestack.dequeue().getMatrix());
+
+				
 			}
 		}
 		scan.close();
